@@ -1,109 +1,112 @@
 function translate() {
-  try {
-    const inputBox = document.getElementById("input");
-    const resultBox = document.getElementById("result");
+  const inputBox = document.getElementById("input");
+  const resultBox = document.getElementById("result");
 
-    if (!inputBox || !resultBox) {
-      document.body.innerHTML += "<div style='color:red'>ERROR: Missing HTML elements.</div>";
-      return;
-    }
+  const text = inputBox.value.toLowerCase().trim();
 
-    const text = inputBox.value.toLowerCase().trim();
-
-    if (!text) {
-      resultBox.innerHTML = "Please enter text to translate.";
-      return;
-    }
-
-    const rules = {
-      "alignment": {
-        literal: "agreement on what we're doing",
-        implied: [
-          "someone disagrees but doesn’t want to say it directly",
-          "leadership wants unity before moving forward",
-          "they need you to adjust your approach"
-        ],
-        note: "Often used to signal disagreement indirectly or request behavioral alignment."
-      },
-      "circle back": {
-        literal: "return to this later",
-        implied: [
-          "this is postponed indefinitely",
-          "they need more information first",
-          "you may be responsible for reminding them"
-        ],
-        note: "Rarely includes a concrete timeline unless someone owns follow-up."
-      },
-      "touch base": {
-        literal: "talk briefly",
-        implied: [
-          "they want an update",
-          "they’re unsure about progress",
-          "they want to check how things are going socially or emotionally"
-        ],
-        note: "Usually a check-in, not urgent but expected."
-      },
-      "stretch goal": {
-        literal: "an ambitious target",
-        implied: [
-          "this may affect your performance review",
-          "leadership expects increased output",
-          "capacity limits may not be acknowledged"
-        ],
-        note: "Often used to justify increased workload."
-      },
-      "manage expectations": {
-        literal: "prepare for a realistic outcome",
-        implied: [
-          "something may disappoint stakeholders",
-          "resources or timelines are not enough",
-          "someone is softening bad news"
-        ],
-        note: "Signals a downward adjustment of hopes."
-      }
-    };
-
-    let found = false;
-    let finalHTML = "";
-
-    for (let [keyword, meaning] of Object.entries(rules)) {
-      const regex = new RegExp(keyword, "gi");
-
-      if (regex.test(text)) {
-        found = true;
-        finalHTML += `
-          <div style="margin-bottom: 25px;">
-            <div class="phrase-title">Phrase detected: ${keyword}</div><br>
-
-            <strong>Literal meaning:</strong><br>
-            ${meaning.literal}<br><br>
-
-            <strong>Possible implied meanings:</strong>
-            <ul>
-              ${meaning.implied.map(i => `<li>${i}</li>`).join("")}
-            </ul>
-
-            <strong>Context note:</strong><br>
-            ${meaning.note}
-          </div>
-        `;
-      }
-    }
-
-    if (!found) {
-      finalHTML = "No corporate phrasing detected. Try a more common expression or longer sentence.";
-    }
-
-    resultBox.innerHTML = finalHTML;
-
-  } catch (err) {
-    document.getElementById("result").innerHTML = `
-      <div style="color: #ff6b6b; font-weight: bold;">
-        JavaScript Error:<br>
-        ${err.message}
-      </div>
-    `;
+  if (!text) {
+    resultBox.innerHTML = "Please enter text to translate.";
+    return;
   }
+
+  // 🔥 FLEXIBLE DICTIONARY WITH VARIATIONS AND PARTIAL MATCHES
+  const rules = [
+    {
+      keywords: ["alignment", "align", "aligned"],
+      literal: "agreement on the plan or direction",
+      implied: [
+        "someone disagrees privately",
+        "leadership wants unity before moving forward",
+        "you may need to adjust your approach"
+      ],
+      note: "Often used when there’s disagreement but nobody wants confrontation."
+    },
+    {
+      keywords: ["circle back", "circling back"],
+      literal: "return to this later",
+      implied: [
+        "this is postponed indefinitely",
+        "they need more information",
+        "you may need to follow up or it will be forgotten"
+      ],
+      note: "Common stalling phrase in corporate environments."
+    },
+    {
+      keywords: ["touch base", "checking in", "check in"],
+      literal: "talk briefly",
+      implied: [
+        "they want an update",
+        "they’re unsure about progress",
+        "they want reassurance that things are moving"
+      ],
+      note: "Usually signals uncertainty more than urgency."
+    },
+    {
+      keywords: ["stretch goal", "reach further", "push harder"],
+      literal: "a difficult or ambitious target",
+      implied: [
+        "your workload is increasing",
+        "you may be judged on this later",
+        "capacity limits might not be acknowledged"
+      ],
+      note: "Often used to justify unrealistic expectations."
+    },
+    {
+      keywords: ["manage expectations", "reset expectations", "expectations management"],
+      literal: "prepare for a realistic outcome",
+      implied: [
+        "something disappointing is coming",
+        "results may fall short",
+        "someone is softening bad news"
+      ],
+      note: "Signals a downward shift in projected results."
+    },
+    {
+      keywords: ["disconnect", "disconnected", "feel disconnected"],
+      literal: "not connected or aligned emotionally or strategically",
+      implied: [
+        "someone is unhappy with communication style",
+        "someone feels out of the loop",
+        "there is a relationship issue not being stated clearly"
+      ],
+      note: "Usually points to a mismatch in communication tone or expectations."
+    }
+  ];
+
+  let found = false;
+  let finalHTML = "";
+
+  for (const rule of rules) {
+    const match = rule.keywords.some(keyword => text.includes(keyword));
+
+    if (match) {
+      found = true;
+
+      finalHTML += `
+        <div style="margin-bottom: 25px;">
+          <div class="phrase-title">Phrase detected: ${rule.keywords[0]}</div><br>
+
+          <strong>Literal meaning:</strong><br>
+          ${rule.literal}<br><br>
+
+          <strong>Possible implied meanings:</strong>
+          <ul>
+            ${rule.implied.map(i => `<li>${i}</li>`).join("")}
+          </ul>
+
+          <strong>Context note:</strong><br>
+          ${rule.note}
+        </div>
+      `;
+    }
+  }
+
+  if (!found) {
+    finalHTML = "No corporate phrasing detected. Try a more common expression or longer sentence.";
+  }
+
+  resultBox.innerHTML = finalHTML;
 }
+
 window.translate = translate;
 
