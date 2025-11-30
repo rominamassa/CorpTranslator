@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>CorpTranslator</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Inter", Arial, sans-serif;
+      background: radial-gradient(circle at 20% 20%, #1e1b4b, #0a0a0f 60%);
+      color: #e2e8f0;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 42px;
+      letter-spacing: 1px;
+      text-align: center;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, #a78bfa, #7dd3fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      padding: 30px;
+      border-radius: 14px;
+      max-width: 700px;
+      width: 100%;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 25px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 15px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f1f5f9;
+      font-size: 16px;
+      margin-bottom: 20px;
+      resize: none;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #5b21b6, #3b82f6);
+      color: white;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 25px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+  </style>
+</head>
+
+<body>
+  <h1>CorpTranslator</h1>
+
+  <div class="panel">
+    <textarea id="input" placeholder="Paste corporate speak here..."></textarea>
+    <button id="translateButton">Translate</button>
+    <div id="result"></div>
+  </div>
+
+  <!-- Guaranteed script loader -->
+  <script>
+    const script = document.createElement("script");
+    script.src = "translator.js?" + Date.now(); // break cache always
+    script.onload = () => {
+      if (typeof translate !== "function") {
+        document.getElementById("result").innerHTML =
+          "<div style='color:red'>translator.js loaded but translate() is not defined.</div>";
+        return;
+      }
+      document.getElementById("translateButton")
+        .addEventListener("click", () => translate());
+    };
+    script.onerror = () => {
+      document.getElementById("result").innerHTML =
+        "<div style='color:red'>Could not load translator.js</div>";
+    };
+    document.body.appendChild(script);
+  </script>
+
+</body>
+</html>
+
